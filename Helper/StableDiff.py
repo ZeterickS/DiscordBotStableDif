@@ -15,7 +15,7 @@ async def Txt2ImgAPI(prompt, requester, filename):
         "height": 800
     }
 
-    response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)
+    response = await requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)
     
     r = response.json()
 
@@ -31,4 +31,4 @@ async def Txt2ImgAPI(prompt, requester, filename):
         pnginfo.add_text("parameters", response2.json().get("info"))
 
         image.save(filename)
-        await image.save('output.png', pnginfo=pnginfo)    
+        image.save('output.png', pnginfo=pnginfo)    
