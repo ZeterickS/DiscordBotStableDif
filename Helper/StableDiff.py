@@ -10,9 +10,9 @@ url = "http://192.168.178.21:7860"
 async def Txt2ImgAPI(prompt, requester, filename):
     payload = {
         "prompt": str(prompt),
-        "steps": 20,
-        "width": 800,
-        "height": 600
+        "steps": 25,
+        "width": 1000,
+        "height": 800
     }
 
     response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)

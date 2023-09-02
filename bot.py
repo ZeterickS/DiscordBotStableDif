@@ -45,7 +45,7 @@ async def Txt2Img(ctx, *arg):
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
-    prompt = "".join(arg)
+    prompt = " ".join(arg)
 
     try:
         await Txt2ImgAPI(prompt, str(ctx.author), filename)
