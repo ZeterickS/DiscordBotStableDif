@@ -11,10 +11,10 @@ async def Txt2ImgAPI(prompt, requester, filename):
     payload = {
         "prompt": str(prompt),
         "negative_prompt": "nude naked",
-        "steps": 20,
-        "width": 756,
-        "batch_size": 4,
-        "height": 756
+        "steps": 30,
+        "batch_count": 4,
+        "width": 1200,
+        "height": 800
     }
 
     response = requests.post(url=f'{url}/sdapi/v1/txt2img', json=payload)
