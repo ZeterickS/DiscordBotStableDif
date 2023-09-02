@@ -40,8 +40,9 @@ async def Txt2Img(ctx, *arg):
 
     if not arg:
         await ctx.channel.send("Please provide a prompt!")
+        return
 
-    x = await ctx.channel.send('Generating Image...')
+    await ctx.channel.send('Generating Image...')
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
