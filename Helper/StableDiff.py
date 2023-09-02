@@ -13,6 +13,7 @@ async def Txt2ImgAPI(prompt, requester, filename):
         "negative_prompt": "nude naked",
         "steps": 20,
         "width": 756,
+        "batch_size": 4,
         "height": 756
     }
 
