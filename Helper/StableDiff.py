@@ -7,7 +7,7 @@ from PIL import Image, PngImagePlugin
 
 url = "http://192.168.178.21:7860"
 
-async def Txt2ImgAPI(prompt, requester, filename):
+async def Txt2ImgAPI(prompt, filename):
     payload = {
         "prompt": str(prompt),
         "steps": 25,
