@@ -27,9 +27,11 @@ async def on_ready():
 
 
 inUse = False
+
 @bot.command()
 async def Txt2Img(ctx, *arg):
-    
+    global inUse
+
     if inUse == True:
         await ctx.channel.send("Please wait an image is already being generated!")
         return
