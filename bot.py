@@ -25,10 +25,15 @@ def CheckUptime():
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+
+inUse = False
 @bot.command()
 async def Txt2Img(ctx, *arg):
-    print (ctx.author)
-
+    
+    if inUse == True:
+        await ctx.channel.send("Please wait an image is already being generated!")
+        return
+    
     if ctx.author == bot.user:
         return
 
@@ -36,12 +41,15 @@ async def Txt2Img(ctx, *arg):
     UptimeStatus = CheckUptime()
     if UptimeStatus == "Error":
         await ctx.channel.send("Error: Stable Diffusion is not available on LabDesktop!")
+        inUse = False
         return
 
     if not arg:
         await ctx.channel.send("Please provide a prompt!")
+        inUse = False
+        return
 
-    x = await ctx.channel.send('Generating Image...')
+    await ctx.channel.send('Generating Image...')
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
@@ -51,7 +59,9 @@ async def Txt2Img(ctx, *arg):
         await Txt2ImgAPI(prompt, str(ctx.author), filename)
         await ctx.channel.send(file=discord.File(filename))
         await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
+        inUse = False
     except Exception as e:
         await ctx.channel.send(f"An error occurred: {str(e)}")
+        inUse = False
 
 bot.run(token)
