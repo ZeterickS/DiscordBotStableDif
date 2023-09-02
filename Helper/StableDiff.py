@@ -31,4 +31,4 @@ async def Txt2ImgAPI(prompt, requester, filename):
         pnginfo.add_text("parameters", response2.json().get("info"))
 
         image.save(filename)
-        image.save('output.png', pnginfo=pnginfo)    
+        await image.save('output.png', pnginfo=pnginfo)    
