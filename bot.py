@@ -35,7 +35,7 @@ async def Txt2Img(ctx, *arg):
     # Include in every command -> checks if Stable Diffusion on Lab Desktop is reachable
     UptimeStatus = CheckUptime()
     if UptimeStatus == "Error":
-        await ctx.channel.send("Error: Stable Diffusion is not available on LabDesktop!")
+        await ctx.channel.send("Error: Stable Diffusion is not Running! Cedric is offline.")
         return
 
     if not arg:
