@@ -3,6 +3,11 @@ from discord.ext import commands
 import requests as r
 from Helper.StableDiff import Txt2ImgAPI
 import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+token = os.environ.get("TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -36,15 +41,17 @@ async def Txt2Img(ctx, *arg):
     if not arg:
         await ctx.channel.send("Please provide a prompt!")
 
-    await ctx.channel.send('On it!')
+    x = await ctx.channel.send('Generating Image...')
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
+    prompt = "".join(arg)
 
     try:
-        await Txt2ImgAPI(" ".join(arg), str(ctx.author), filename)
+        await Txt2ImgAPI(prompt, str(ctx.author), filename)
         await ctx.channel.send(file=discord.File(filename))
+        await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
     except Exception as e:
         await ctx.channel.send(f"An error occurred: {str(e)}")
 
-bot.run("")
+bot.run(token)
