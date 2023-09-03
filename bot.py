@@ -49,7 +49,7 @@ async def Txt2Img(ctx, *arg):
     prompt = " ".join(arg)
 
     try:
-        await Txt2ImgAPI(prompt, str(ctx.author), filename)
+        await Txt2ImgAPI(prompt, filename)
         await ctx.channel.send(file=discord.File(filename))
         await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
     except Exception as e:
