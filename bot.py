@@ -42,7 +42,7 @@ async def Txt2Img(ctx, *arg):
         await ctx.channel.send("Please provide a prompt!")
         return
 
-    await ctx.channel.send('Generating Image...')
+    generatingImage_message = await ctx.channel.send('Generating Image...')
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
@@ -52,7 +52,9 @@ async def Txt2Img(ctx, *arg):
         await Txt2ImgAPI(prompt, filename)
         await ctx.channel.send(file=discord.File(filename))
         await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
+        await generatingImage_message.delete()
     except Exception as e:
         await ctx.channel.send(f"An error occurred: {str(e)}")
+        await generatingImage_message.delete()
 
 bot.run(token)
