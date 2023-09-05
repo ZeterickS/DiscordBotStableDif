@@ -25,6 +25,9 @@ def CheckUptime():
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+messagePrompts = {}
+regeneratedMessages = set()
+
 @bot.command()
 async def Txt2Img(ctx, *arg):
     print (ctx.author)
@@ -42,19 +45,42 @@ async def Txt2Img(ctx, *arg):
         await ctx.channel.send("Please provide a prompt!")
         return
 
-    generatingImage_message = await ctx.channel.send('Generating Image...')
-
+    generatingImageMessage = await ctx.channel.send('Generating Image...')
+    
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     filename = f'archive/output_{timestamp}+{ctx.author}.png'
     prompt = " ".join(arg)
 
     try:
         await Txt2ImgAPI(prompt, filename)
-        await ctx.channel.send(file=discord.File(filename))
+        imageMessage = await ctx.channel.send(file=discord.File(filename))
         await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
-        await generatingImage_message.delete()
+        await generatingImageMessage.delete()
+        messagePrompts[imageMessage.id] = prompt
+        await imageMessage.add_reaction("🔄")
     except Exception as e:
         await ctx.channel.send(f"An error occurred: {str(e)}")
-        await generatingImage_message.delete()
+        await generatingImageMessage.delete()
+    
+@bot.event
+async def on_reaction_add(reaction, user): 
+    if not user.bot and reaction.message.author == bot.user and str(reaction.emoji) == "🔄" and reaction.message.id not in regeneratedMessages:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        filename = f'archive/output_{timestamp}+{reaction.message.author}.png'
+        prompt = messagePrompts.get(reaction.message.id, "Default Prompt")
 
+        regeneratedMessages.add(reaction.message.id)
+        
+        #Same try except block as above / ctx is reaction here
+        generatingImageMessage = await reaction.message.channel.send('Make simmilar image...')
+        
+        try:
+            await Txt2ImgAPI(prompt, filename)
+            newImageMessage = await reaction.message.channel.send(file=discord.File(filename))
+            await generatingImageMessage.delete()
+            await newImageMessage.add_reaction("🔄")
+        except Exception as e:
+            await reaction.message.channel.send(f"An error occurred: {str(e)}")
+            await generatingImageMessage.delete()
+    
 bot.run(token)
