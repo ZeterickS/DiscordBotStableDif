@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import requests as r
-from Helper.StableDiff import Txt2ImgAPI
+from Helper.StableDiff import Txt2ImgAPI, Img2ImgAPI
 import datetime
 import os
 from dotenv import load_dotenv
@@ -25,6 +25,8 @@ def CheckUptime():
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+
+#TXT2IMG
 messagePrompts = {}
 regeneratedMessages = set()
 
@@ -77,10 +79,41 @@ async def on_reaction_add(reaction, user):
         try:
             await Txt2ImgAPI(prompt, filename)
             newImageMessage = await reaction.message.channel.send(file=discord.File(filename))
+            await reaction.message.channel.send(f"<@{reaction.message.author.id}> {prompt}")
             await generatingImageMessage.delete()
             await newImageMessage.add_reaction("🔄")
         except Exception as e:
             await reaction.message.channel.send(f"An error occurred: {str(e)}")
             await generatingImageMessage.delete()
     
+#IMG2IMG
+@bot.command()
+async def Img2Img(ctx, *args):
+    if ctx.author == bot.user:
+        return
+
+    # Include in every command -> checks if Stable Diffusion on Lab Desktop is reachable
+    UptimeStatus = CheckUptime()
+    if UptimeStatus == "Error":
+        await ctx.channel.send("Error: Stable Diffusion is not Running! Cedric is offline.")
+        return
+    
+    if ctx.message.attachments:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        filename = f'archive/output_{timestamp}+{ctx.author}.png'
+        prompt = " ".join(args)
+        for attachment in ctx.message.attachments:
+            if attachment.url.lower().endswith(('.png', '.jpg', '.jpeg')):
+                try:
+                    await attachment.save(f'archive/{attachment.filename}')
+                    await Img2ImgAPI(f'archive/{attachment.filename}' ,filename, prompt)
+                    await ctx.channel.send(file=discord.File(filename))
+                    await ctx.channel.send(f"<@{ctx.author.id}> {prompt}")
+                except Exception as e:
+                    await ctx.channel.send("Error...")
+    else:
+        await ctx.channel.send("No image provided. Please attach a image to your message!")
+                
+
+
 bot.run(token)
