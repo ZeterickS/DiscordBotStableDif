@@ -37,6 +37,13 @@ async def Txt2Img(ctx, *arg):
     if ctx.author == bot.user:
         return
 
+    # Include in every command -> checks if Stable Diffusion on Lab Desktop is reachable
+    try:
+        CheckUptime()
+    except:
+        await ctx.channel.send("Error: Stable Diffusion is not Running! Cedric is offline.")
+        return
+
     if not arg:
         await ctx.channel.send("Please provide a prompt!")
         return
